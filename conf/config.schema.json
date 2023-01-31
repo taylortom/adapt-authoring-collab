@@ -6,6 +6,11 @@
       "description": "Whether this module is a template",
       "type": "string",
       "default": "ws://localhost:3000"
+    },
+    "idleTime": {
+      "description": "Time in minutes until a user is classed as inactive",
+      "type": "number",
+      "default": 1
     }
   }
 }

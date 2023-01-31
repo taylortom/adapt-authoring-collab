@@ -5,12 +5,13 @@ define(function (require) {
   var users = [];
   let allActiveUsers = [];
   const idleTime = 1;
-  const socket = new WebSocket("ws://localhost:3000");
+  const [protocol, serverRoot] = window.location.origin.split("//");
+  const socket = new WebSocket(`ws://${serverRoot}/socket`);
 
   Origin.on("login:changed", loadData);
 
   Origin.on("user:logout", function () {
-    socket.close();
+    //socket.close();
   });
 
   Origin.on("origin:dataReady", function init() {
@@ -43,17 +44,20 @@ define(function (require) {
       });
 
     socket.addEventListener("open", function (event) {
-      // console.log("Connected to WS Server");
+      console.log("Connected to WS Server");
     });
 
     socket.addEventListener("close", function (event) {
-      const message = JSON.parse(event.data);
+      // const message = JSON.parse(event.data);
     });
 
     // Listen for messages
-    socket.addEventListener("message", function (event, isBinary) {
-      const message = JSON.parse(event.data);
-      updateUsers(message);
+    socket.addEventListener("message", function (event) {
+      const messageUpdate = new Uint8Array(event.data).buffer;
+      const message = new DataView(messageUpdate);
+      // updateUsers(message);
+      console.log(event.data);
+      console.log(message);
     });
   }
 
@@ -76,7 +80,7 @@ define(function (require) {
   }
 
   function userDataLoaded() {
-    socket.send(JSON.stringify(users[0]));
+    socket.send(users[0]);
     updateUsers(users[0]);
   }
 

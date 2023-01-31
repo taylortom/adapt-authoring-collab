@@ -16,9 +16,7 @@ define(function (require) {
       },
 
       initialize(users, currentUser) {
-        console.log(currentUser);
         currentLocation = currentUser.userLocation;
-        console.log(currentLocation);
         this.listenToEvents();
         this.render(users);
       },
