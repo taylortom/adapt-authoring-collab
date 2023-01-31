@@ -1,0 +1,73 @@
+@import 'colours';
+
+.collab__{
+
+  &userIcon {
+    margin: 5px 5px;
+    border-radius: 50%;
+    border-width: 3px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(42, 163, 206, 0.4);
+    border-style: solid;
+    font-weight: bold;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    cursor: pointer;
+
+    &.user-active {
+      border-color: #34bee0;
+    }
+
+    &.user-inactive {
+      border-color: #faa61a;
+    }
+  }
+
+  &userIcon:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+
+    > .collab__userIcon-content {
+      color: #34bee0 !important;
+      font-style: 'Raleway', sans-serif;
+      font-size: 15px;
+    }
+  }
+
+  &userIcon-content {
+    color: rgba(255, 255, 255);
+    font-style: 'Raleway', sans-serif;
+    font-size: 15px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+
+
+  &icon-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &inner {
+    display: flex;
+    justify-content: flex-end;
+    height: 50px;
+
+    & > .collab__break {
+      display: flex;
+      flex-basis: 100%;
+    }
+  }
+
+}
+
+.collab__tooltip-container {
+  background-color: rgba(255, 255, 255, 0.6);
+  top: 65px;
+  position: absolute;
+  color: #34bee0 !important;
+  font-style: 'Raleway', sans-serif;
+  font-size: 15px;
+}

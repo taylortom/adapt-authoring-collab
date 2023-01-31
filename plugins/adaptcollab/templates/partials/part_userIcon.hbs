@@ -1,0 +1,13 @@
+{{#if idle}}
+  <div class="collab__userIcon user-inactive js-userIcon" user={{email}}>
+    <div class="collab__userIcon-content">
+      {{userName}}
+    </div>
+  </div>
+{{else}}
+  <div class="collab__userIcon user-active js-userIcon" user={{email}}>
+    <div class="collab__userIcon-content">
+      {{userName}}
+    </div>
+  </div>
+{{/if}}

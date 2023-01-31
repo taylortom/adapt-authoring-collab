@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "isTemplate": {
+    "websocketURL": {
       "description": "Whether this module is a template",
-      "type": "boolean",
-      "default": true
+      "type": "string",
+      "default": "ws://localhost:3000"
     }
   }
 }

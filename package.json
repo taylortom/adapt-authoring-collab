@@ -1,13 +1,17 @@
 {
-  "name": "adapt-authoring-templatemodule",
+  "name": "adapt-authoring-collab",
   "version": "0.0.1",
   "description": "A template module for the Adapt authoring tool",
-  "homepage": "https://github.com/adapt-security/adapt-authoring-templatemodule",
+  "homepage": "https://github.com/adapt-security/adapt-authoring-collab",
   "license": "GPL-3.0",
   "type": "module",
   "main": "index.js",
-  "repository": "github:adapt-security/adapt-authoring-templatemodule",
-  "peerDependencies": {
-    "adapt-authoring-core": "github:adapt-security/adapt-authoring-core"
+  "repository": "github:adapt-security/adapt-authoring-collab",
+  "dependencies": {
+    "adapt-authoring-core": "github:adapt-security/adapt-authoring-core",
+    "adapt-authoring-users": "github:adapt-security/adapt-authoring-users",
+    "handlebars": "^4.7.7",
+    "express": "4.16.3",
+    "ws": "^3.3.3"
   }
 }
