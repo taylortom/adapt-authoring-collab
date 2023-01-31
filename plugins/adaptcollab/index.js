@@ -53,11 +53,8 @@ define(function (require) {
 
     // Listen for messages
     socket.addEventListener("message", function (event) {
-      const messageUpdate = new Uint8Array(event.data).buffer;
-      const message = new DataView(messageUpdate);
       // updateUsers(message);
       console.log(event.data);
-      console.log(message);
     });
   }
 
