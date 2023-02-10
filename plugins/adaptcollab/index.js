@@ -2,127 +2,81 @@
 define(function (require) {
   var Origin = require("core/origin");
   var AdaptCollabView = require("./views/adaptCollabView");
-  var users = [];
-  let allActiveUsers = [];
-  const idleTime = 1;
   const [protocol, serverRoot] = window.location.origin.split("//");
-  const socket = new WebSocket(`ws://${serverRoot}/socket`);
+  this.socket;
+  this.user = {};
 
   Origin.on("login:changed", loadData);
 
-  Origin.on("user:logout", function () {
-    //socket.close();
-  });
-
   Origin.on("origin:dataReady", function init() {
     loadData();
+  });
+
+  function render(users) {
+    $(".toast-container").empty();
+    var acv = new AdaptCollabView(users);
+    $(".toast-container").append(acv.$el);
+  }
+
+  function setupEventListeners() {
+    let timeout;
+    $("body,html").bind(
+      "touchstart touchmove scroll mousedown DOMMouseScroll mousewheel keyup",
+      () => {
+        if (timeout) {
+          clearTimeout(timeout);
+          if (this.user.status !== 'ACTIVE') {
+            this.user.status = 'ACTIVE'
+            this.socket.send(`${this.user.id}::idle::ACTIVE`)
+          }
+        }
+        timeout = setTimeout(() => {
+          this.user.status = 'INACTIVE'
+          this.socket.send(`${this.user.id}::idle::INACTIVE`)
+        }, 60000);
+      }
+    );
+
+    Origin.on("location:change", function () {
+      socket.send(`${user.id}::location::${window.location.hash}`);
+    });
 
     Origin.on("editorView:postRender", function () {
       render();
     });
 
-    Origin.on("location:change", function () {
-      locationChange();
+    this.socket.addEventListener("message", function (event) {
+      const data = JSON.parse(event.data);
+      console.log(data)
+      render(data)
     });
-  });
+  }
 
-  function render() {
-    $(".toast-container").empty();
-    var acv = new AdaptCollabView(allActiveUsers, users[0]);
-    $(".toast-container").append(acv.$el);
+  function dataLoaded(currentUser) {
+    this.socket = new WebSocket(`ws://${serverRoot}/socket`);
+
+    this.user = {
+      id: currentUser._id,
+      email: currentUser.email,
+      userLocation: window.location.hash,
+      status: 'ACTIVE',
+      socket: this.socket
+    };
+
+    this.socket.onopen = function (e) {
+      const newUser = JSON.stringify(user)
+      socket.send(`${user.id}::newUser::${newUser}`);
+      setupEventListeners();
+    };
   }
 
   function loadData() {
     $.get("/api/adaptcollab/getUser/")
-      .done(function (allUSers) {
-        users = allUSers;
-        locationChange();
-        checkIdle();
+      .done(function (currentUser) {
+        dataLoaded(currentUser[0]);
       })
       .fail(function (jqXHR, textStatus, errorThrown) {
-        console.log(Origin);
+        console.log("user not found");
       });
-
-    socket.addEventListener("open", function (event) {
-      console.log("Connected to WS Server");
-    });
-
-    socket.addEventListener("close", function (event) {
-      // const message = JSON.parse(event.data);
-    });
-
-    // Listen for messages
-    socket.addEventListener("message", function (event) {
-      // updateUsers(message);
-      console.log(event.data);
-    });
-  }
-
-  function updateUsers(message) {
-    if (allActiveUsers.length === 0) {
-      allActiveUsers.push(message);
-      return;
-    }
-
-    const index = allActiveUsers.findIndex((x) => x._id === message._id);
-
-    if (index === undefined || index === -1) {
-      allActiveUsers.push(message);
-      render();
-      return;
-    }
-
-    allActiveUsers[index] = message;
-    render();
-  }
-
-  function userDataLoaded() {
-    socket.send(users[0]);
-    updateUsers(users[0]);
-  }
-
-  function locationChange() {
-    if (users.length === 0) return;
-
-    originLocation = Origin.location;
-    let location = Object.values(originLocation)[3];
-
-    if (!location) {
-      location = Object.values(originLocation)[1];
-    }
-
-    let currentUser = users[0];
-
-    Object.assign(currentUser, {
-      userLocation: location,
-      lastActive: new Date().toISOString(),
-      idle: false
-    });
-
-    Origin.once("editorView:render", function () {
-      userDataLoaded();
-    });
-  }
-
-  function checkIdle() {
-    let currentUser = users[0];
-    currentUser.idle = false;
-    userDataLoaded();
-
-    loop = setInterval(function () {
-      if (!currentUser.lastActive) {
-        currentUser.lastActive = new Date().toISOString();
-      }
-
-      const currentDate = new Date();
-      const lastAccess = new Date(currentUser.lastActive);
-      const difference = currentDate - lastAccess;
-      const minutesDifference = Math.floor(difference / 1000 / 60);
-
-      if (minutesDifference >= idleTime && currentUser.idle !== true) {
-        currentUser.idle = true;
-        userDataLoaded();
-      }
-    }, 10000);
   }
 });
