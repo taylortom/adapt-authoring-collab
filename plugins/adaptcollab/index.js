@@ -53,7 +53,7 @@ define(function (require) {
   }
 
   function dataLoaded(currentUser) {
-    this.socket = new WebSocket(`ws://${serverRoot}/socket`);
+    this.socket = new WebSocket(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${serverRoot}/socket`);
 
     this.user = {
       id: currentUser._id,
