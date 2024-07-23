@@ -10,8 +10,6 @@
   "dependencies": {
     "adapt-authoring-core": "github:adapt-security/adapt-authoring-core",
     "adapt-authoring-users": "github:adapt-security/adapt-authoring-users",
-    "handlebars": "^4.7.7",
-    "express": "4.16.3",
     "ws": "^8.12.0"
   }
 }
